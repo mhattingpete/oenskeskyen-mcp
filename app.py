@@ -210,7 +210,11 @@ async def add_wishlist_item(
         )
 
         # Handle the GraphQL response structure
-        if result.get("data") and result["data"].get("wish") and result["data"]["wish"].get("create"):
+        if (
+            result.get("data")
+            and result["data"].get("wish")
+            and result["data"]["wish"].get("create")
+        ):
             wish_data = result["data"]["wish"]["create"]
         else:
             # Fallback to empty wish data if structure is unexpected
@@ -278,21 +282,23 @@ async def get_product_metadata(
     """Get product metadata from URL using productByUrlV2 query"""
     try:
         result = await auth.get_product_by_url(url, country_code)
-        
+
         # Extract and return the product data
-        if (result.get("data") and 
-            result["data"].get("products") and 
-            result["data"]["products"].get("getByUrlV2")):
+        if (
+            result.get("data")
+            and result["data"].get("products")
+            and result["data"]["products"].get("getByUrlV2")
+        ):
             return {
                 "success": True,
                 "product": result["data"]["products"]["getByUrlV2"],
-                "raw_response": result
+                "raw_response": result,
             }
         else:
             return {
                 "success": False,
                 "message": "No product metadata found for this URL",
-                "raw_response": result
+                "raw_response": result,
             }
     except Exception as e:
         raise HTTPException(
