@@ -1,6 +1,6 @@
 # Makefile for Ønskeskyen API Reconstruction
 
-.PHONY: help monitor analyze reconstruct clean install lint format api test-cache
+.PHONY: help monitor analyze reconstruct clean install lint format api test-cache test
 
 # Default target
 help:
@@ -10,6 +10,7 @@ help:
 	@echo "  analyze     - Parse captured network data and reconstruct API"
 	@echo "  reconstruct - Run full reconstruction (monitor + analyze)"
 	@echo "  api         - Start the FastAPI server"
+	@echo "  test        - Run all unit and integration tests"
 	@echo "  test-cache  - Test caching functionality (requires running API)"
 	@echo "  clean       - Remove captured data files"
 	@echo "  lint        - Run ruff linting"
@@ -68,6 +69,11 @@ api:
 	@echo "🛑 Press Ctrl+C to stop"
 	@echo ""
 	uv run python start_api.py
+
+# Run all tests
+test:
+	@echo "🧪 Running all unit and integration tests..."
+	uv run pytest tests/ -v
 
 # Test caching functionality
 test-cache:

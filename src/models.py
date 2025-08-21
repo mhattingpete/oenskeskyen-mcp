@@ -172,12 +172,18 @@ class AddWishlistItemRequest(BaseModel):
 
     url: HttpUrl = Field(..., description="Product URL to add to wishlist")
     title: Optional[str] = Field(
-        None, max_length=200, description="Optional custom title (overrides URL metadata)"
+        None,
+        max_length=200,
+        description="Optional custom title (overrides URL metadata)",
     )
     description: Optional[str] = Field(
-        None, max_length=1000, description="Optional description (overrides URL metadata)"
+        None,
+        max_length=1000,
+        description="Optional description (overrides URL metadata)",
     )
-    price: Optional[Decimal] = Field(None, ge=0, description="Optional price (overrides URL metadata)")
+    price: Optional[Decimal] = Field(
+        None, ge=0, description="Optional price (overrides URL metadata)"
+    )
     quantity: int = Field(default=1, ge=1, le=100, description="Quantity (default: 1)")
     use_url_metadata: bool = Field(
         default=True, description="Whether to fetch metadata from URL (default: True)"
