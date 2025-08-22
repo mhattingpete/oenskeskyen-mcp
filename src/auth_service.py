@@ -43,6 +43,8 @@ class AuthenticationService:
             await self.browser_manager.authenticate()
 
             # Setup GraphQL client with authenticated page
+            if not self.browser_manager.page:
+                raise Exception("Browser not setup - call setup_browser() first")
             self.graphql_client = GraphQLClient(self.browser_manager.page)
             self.authenticated_at = datetime.now()
 

@@ -1,6 +1,6 @@
 # Makefile for Ønskeskyen API Reconstruction
 
-.PHONY: help monitor analyze reconstruct clean install lint format api test-cache test
+.PHONY: help monitor analyze reconstruct clean install lint format api mcp setup-claude test-cache test
 
 # Default target
 help:
@@ -10,6 +10,8 @@ help:
 	@echo "  analyze     - Parse captured network data and reconstruct API"
 	@echo "  reconstruct - Run full reconstruction (monitor + analyze)"
 	@echo "  api         - Start the FastAPI server"
+	@echo "  mcp         - Start the MCP server for Claude Code integration"
+	@echo "  setup-claude- Setup Claude Desktop MCP integration (macOS only)"
 	@echo "  test        - Run all unit and integration tests"
 	@echo "  test-cache  - Test caching functionality (requires running API)"
 	@echo "  clean       - Remove captured data files"
@@ -69,6 +71,28 @@ api:
 	@echo "🛑 Press Ctrl+C to stop"
 	@echo ""
 	uv run python start_api.py
+
+# Start the MCP server
+mcp:
+	@echo "🔗 Starting Ønskeskyen MCP Server for Claude Code..."
+	@echo "⚠️  Make sure ONSKESKYEN_USERNAME and ONSKESKYEN_PASSWORD are set in .env"
+	@echo "🤖 Server will provide these tools to Claude:"
+	@echo "   • get_user_profile - Get your profile information"
+	@echo "   • get_wishlists - List all your wishlists"
+	@echo "   • get_wishlist_items - Get items from a specific wishlist"
+	@echo "   • add_wishlist_item - Add new items to wishlists"
+	@echo "   • get_wishlist_details - Get detailed wishlist information"
+	@echo "   • get_product_metadata - Extract product metadata from URLs"
+	@echo "📖 See MCP_INTEGRATION.md for Claude Code setup instructions"
+	@echo "🛑 Press Ctrl+C to stop"
+	@echo ""
+	uv run python mcp_server.py
+
+# Setup Claude Desktop MCP integration
+setup-claude:
+	@echo "🔗 Setting up Claude Desktop MCP integration..."
+	@echo ""
+	./setup_claude_desktop.sh
 
 # Run all tests
 test:
