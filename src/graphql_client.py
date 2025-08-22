@@ -58,6 +58,8 @@ class GraphQLClient:
                         console.log('Using auth token from storage');
                     }
 
+                    // Log current cookies to understand session state
+                    console.log('Current cookies:', document.cookie);
                     console.log('Request headers:', headers);
 
                     const response = await fetch('https://api.gowish.com/graphql', {
