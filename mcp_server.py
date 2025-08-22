@@ -33,7 +33,7 @@ async def get_authenticated_service() -> AuthenticationService:
         username = os.getenv("ONSKESKYEN_USERNAME")
         password = os.getenv("ONSKESKYEN_PASSWORD")
         
-        logger.info(f"[MCP AUTH] Environment check - Username: {repr(username)}, Password: {repr(password)}")
+        logger.info(f"[MCP AUTH] Environment check - Username: {repr(username)}, Password: {'***' if password else None}")
 
         if not username or not password:
             # Try loading .env again in case it wasn't loaded properly (only if .env exists)
@@ -42,7 +42,7 @@ async def get_authenticated_service() -> AuthenticationService:
                 load_dotenv()
                 username = os.getenv("ONSKESKYEN_USERNAME")
                 password = os.getenv("ONSKESKYEN_PASSWORD")
-                logger.info(f"[MCP AUTH] After .env reload - Username: {repr(username)}, Password: {repr(password)}")
+                logger.info(f"[MCP AUTH] After .env reload - Username: {repr(username)}, Password: {'***' if password else None}")
             
             if not username or not password:
                 raise ValueError(
