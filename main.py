@@ -52,7 +52,8 @@ async def add_urls_to_wishlist():
         page = await context.new_page()
 
         # Navigate to wishlist
-        wishlist_url = "https://onskeskyen.dk/da/wishlists/ZhgfNVLL8ydtRJgc"
+        wishlist_id = os.getenv("WISHLIST_ID")
+        wishlist_url = f"https://onskeskyen.dk/da/wishlists/{wishlist_id}"
         await page.goto(wishlist_url)
 
         # Wait for page to load
