@@ -11,13 +11,13 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 import uvicorn
-from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, HTTPException, Query, status
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
 from src.auth_service import AuthenticationService
 from src.cache_service import cache_service, start_cache_cleanup_task
+from src.credentials import CredentialsError, get_credentials
 from src.models import (
     AddWishlistItemRequest,
     AddWishlistItemResponse,
@@ -25,9 +25,6 @@ from src.models import (
     Wishlist,
     WishlistItem,
 )
-
-# Load environment variables
-load_dotenv()
 
 
 # Global authentication service instance
@@ -39,13 +36,10 @@ async def lifespan(app: FastAPI):
     """Initialize the authentication service on startup"""
     global auth_service_x
 
-    username = os.getenv("ONSKESKYEN_USERNAME")
-    password = os.getenv("ONSKESKYEN_PASSWORD")
-
-    if not username or not password:
-        raise RuntimeError(
-            "Missing required environment variables: ONSKESKYEN_USERNAME and ONSKESKYEN_PASSWORD"
-        )
+    try:
+        username, password = get_credentials()
+    except CredentialsError as exc:
+        raise RuntimeError(str(exc)) from exc
 
     try:
         auth_service_x = AuthenticationService(username, password)

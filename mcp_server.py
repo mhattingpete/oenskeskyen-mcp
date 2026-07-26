@@ -4,19 +4,13 @@ MCP Server for Onskeskyen API
 Exposes existing FastAPI endpoints as MCP tools for LLM interaction
 """
 
-import os
 from typing import Any, Dict, List, Optional
 
 from fastmcp import FastMCP
 from loguru import logger
 
 from src.auth_service import AuthenticationService
-
-# Load environment variables from .env file if it exists (for development)
-# Production/Claude Desktop usage should rely on environment variables passed in config
-if os.path.exists('.env'):
-    from dotenv import load_dotenv
-    load_dotenv()
+from src.credentials import CredentialsError, get_credentials
 
 # Initialize MCP server
 mcp = FastMCP("Onskeskyen Wishlist API")
@@ -30,26 +24,16 @@ async def get_authenticated_service() -> AuthenticationService:
     global auth_service
 
     if auth_service is None or not auth_service.is_authenticated():
-        username = os.getenv("ONSKESKYEN_USERNAME")
-        password = os.getenv("ONSKESKYEN_PASSWORD")
-        
-        logger.info(f"[MCP AUTH] Environment check - Username: {repr(username)}, Password: {'***' if password else None}")
+        try:
+            username, password = get_credentials()
+        except CredentialsError as exc:
+            raise ValueError(
+                "Missing Onskeskyen credentials. "
+                "Run `oenskeskyen login` to store them in your keychain, "
+                "or set ONSKESKYEN_USERNAME and ONSKESKYEN_PASSWORD in your environment."
+            ) from exc
 
-        if not username or not password:
-            # Try loading .env again in case it wasn't loaded properly (only if .env exists)
-            if os.path.exists('.env'):
-                from dotenv import load_dotenv
-                load_dotenv()
-                username = os.getenv("ONSKESKYEN_USERNAME")
-                password = os.getenv("ONSKESKYEN_PASSWORD")
-                logger.info(f"[MCP AUTH] After .env reload - Username: {repr(username)}, Password: {'***' if password else None}")
-            
-            if not username or not password:
-                raise ValueError(
-                    "Missing ONSKESKYEN_USERNAME or ONSKESKYEN_PASSWORD environment variables. "
-                    "These should be set in your Claude Desktop configuration or .env file."
-                )
-
+        logger.info(f"[MCP AUTH] Authenticating user: {username}")
         auth_service = AuthenticationService(username, password)
         await auth_service.authenticate()
         logger.info("✅ Authentication successful")
