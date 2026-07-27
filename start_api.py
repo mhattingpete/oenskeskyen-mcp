@@ -8,29 +8,20 @@ import os
 import sys
 
 import uvicorn
-from dotenv import load_dotenv
 from loguru import logger
 
+from src.credentials import CredentialsError, get_credentials
 
-def validate_environment():
-    """Validate required environment variables"""
-    load_dotenv()
 
-    required_vars = ["ONSKESKYEN_USERNAME", "ONSKESKYEN_PASSWORD"]
-    missing_vars = []
-
-    for var in required_vars:
-        if not os.getenv(var):
-            missing_vars.append(var)
-
-    if missing_vars:
-        logger.error("Missing required environment variables:")
-        for var in missing_vars:
-            logger.error(f"   - {var}")
-        logger.error("\nPlease set these variables in your .env file or environment")
+def validate_credentials():
+    """Validate that credentials can be resolved."""
+    try:
+        get_credentials()
+    except CredentialsError as exc:
+        logger.error(str(exc))
         return False
 
-    logger.success("✅ Environment variables validated")
+    logger.success("✅ Credentials validated")
     return True
 
 
@@ -38,7 +29,7 @@ def main():
     """Main startup function"""
     logger.info("🚀 Starting Onskeskyen API Gateway...")
 
-    if not validate_environment():
+    if not validate_credentials():
         sys.exit(1)
 
     # Configuration from environment variables

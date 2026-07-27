@@ -172,10 +172,10 @@ class BrowserManager:
         """Fill in email field"""
         if not self.page:
             raise Exception("Browser not setup - call setup_browser() first")
-        
+
         if not self.username:
             raise Exception("Username is not set")
-            
+
         email_input = await self.page.query_selector(
             'input[name="email"][data-cy="signupEmailInput"]'
         )
@@ -191,10 +191,10 @@ class BrowserManager:
         """Fill in password field"""
         if not self.page:
             raise Exception("Browser not setup - call setup_browser() first")
-            
+
         if not self.password:
             raise Exception("Password is not set")
-            
+
         password_input = await self.page.query_selector(
             'input[type="password"][name="password"]'
         )
@@ -252,7 +252,7 @@ class BrowserManager:
                 }
             """)
             logger.info(f"Available authentication data: {cookies_info}")
-            
+
             # Execute a simple GraphQL request to establish authenticated session with api.gowish.com
             result = await self.page.evaluate("""
                 async () => {

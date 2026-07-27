@@ -6,6 +6,8 @@
 help:
 	@echo "Available targets:"
 	@echo "  install     - Install dependencies with uv"
+	@echo "  login       - Store Onskeskyen credentials in keychain"
+	@echo "  cli         - Show CLI help"
 	@echo "  monitor     - Run network monitoring to capture API calls"
 	@echo "  analyze     - Parse captured network data and reconstruct API"
 	@echo "  reconstruct - Run full reconstruction (monitor + analyze)"
@@ -22,10 +24,19 @@ help:
 install:
 	uv sync --dev
 
+# Store credentials in keychain
+login:
+	@echo "🔐 Storing Onskeskyen credentials in keychain..."
+	uv run oenskeskyen login
+
+# Show CLI help
+cli:
+	uv run oenskeskyen --help
+
 # Monitor network traffic and capture API calls
 monitor:
 	@echo "🔍 Starting network monitoring..."
-	@echo "⚠️  Make sure ONSKESKYEN_USERNAME and ONSKESKYEN_PASSWORD are set in .env"
+	@echo "⚠️  Make sure credentials are available (run `make login` or set env vars)"
 	uv run python src/network_monitor.py
 
 # Analyze captured data and reconstruct API
@@ -65,7 +76,7 @@ check: lint format
 # Start the FastAPI server
 api:
 	@echo "🚀 Starting Ønskeskyen API Gateway..."
-	@echo "⚠️  Make sure ONSKESKYEN_USERNAME and ONSKESKYEN_PASSWORD are set in .env"
+	@echo "⚠️  Make sure credentials are available (run `make login` or set env vars)"
 	@echo "📡 Server will be available at http://localhost:8000"
 	@echo "📖 API docs at http://localhost:8000/docs"
 	@echo "🛑 Press Ctrl+C to stop"
@@ -75,7 +86,7 @@ api:
 # Start the MCP server
 mcp:
 	@echo "🔗 Starting Ønskeskyen MCP Server for Claude Code..."
-	@echo "⚠️  Make sure ONSKESKYEN_USERNAME and ONSKESKYEN_PASSWORD are set in .env"
+	@echo "⚠️  Make sure credentials are available (run `make login` or set env vars)"
 	@echo "🤖 Server will provide these tools to Claude:"
 	@echo "   • get_user_profile - Get your profile information"
 	@echo "   • get_wishlists - List all your wishlists"
